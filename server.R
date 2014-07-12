@@ -15,56 +15,60 @@ rankings = subset(rankings, select = c(INSTNM,
                                        STUFACR,
                                        gradrate6))
 
-## Squared Euclidean distance for each school from the user's prefs
-## http://en.wikipedia.org/wiki/Euclidean_distance#Squared_Euclidean_distance
-calcUserPref = function(mydf, U_ENROLL = 975, 
-                              U_YIELD = .30, 
-                              U_IGRNT = 70, 
-                              U_NPG = 21000, 
-                              U_RET = 95, 
-                              U_SF = 12, 
-                              U_GR = 90) 
-{
-  ## calc the sum of squares 
-  sed =  (mydf$ENRLT - U_ENROLL)^2 + 
-        (mydf$yield - U_YIELD)^2 +
-        (mydf$IGRNT_P - U_IGRNT)^2 + 
-        (mydf$NPGRN2 - U_NPG)^2 + 
-        (mydf$RET_PCF - U_RET)^2 + 
-        (mydf$STUFACR - U_SF)^2 + 
-        (mydf$gradrate6 - U_GR)^2
-  
-  ## add the column to the dataframe
-  mydf$dist = sed
-  
-  ## create the rank, smaller values first
-  mydf = transform(mydf, rank = )
-  return(mydf)
-}
 
+
+
+## source the helper functions
+source("R/calcUserPref.R")
+source("R/between.R")
+       
+###############################################################################
+## The Server
+###############################################################################
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
   
-  ## build user rankings here
-  user_df = rankings
-  
-  ## keep the columns we want from the user rankings
-  ## rep
+  user_prefs = reactive({
+    
+    ## get the inputs
+    U_ENROLL = mean(input$enroll)
+    U_YIELD = mean(input$yield)
+    U_IGRNT = mean(input$igrnt)
+    U_NPG = mean(input$netprice)
+    U_RET = mean(input$retention)
+    U_SF = mean(input$sf)
+    U_GR = mean(input$grad)
+    
+    ## filter the data
+    user_pop = subset(rankings, 
+                      between(ENRLT, input$enroll[1], input$enroll[2]) &
+                      between(yield, input$yield[1], input$yield[2]) &
+                      between(IGRNT_P, input$igrnt[1], input$igrnt[2]) &
+                      between(NPGRN2, input$netprice[1], input$netprice[2]) &
+                      between(RET_PCF, input$retention[1], input$retention[2]) &
+                      between(STUFACR, input$sf[1], input$sf[2]) &
+                      between(gradrate6, input$grad[1], input$grad[2]))
+    
+    ## apply the rankings to the filtered data
+    user_df = calcUserPref(user_pop, 
+                           U_ENROLL,
+                           U_YIELD,
+                           U_IGRNT,
+                           U_NPG,
+                           U_RET,
+                           U_SF,
+                           U_GR)
+    
+    ## sort the schools based on ranking
+    user_df = arrange(user_df, rank)
 
-  
-  
-  ## apply distance function and return closest schools
-  final_df = 1
-  
-  
-  ## the data for the table
-  user_rankings = user_df
-  
-  
+  })
+
+
   # Filter data based on selections
   output$schools <- renderDataTable({
-    user_df
+    user_prefs()
   })
   
 
