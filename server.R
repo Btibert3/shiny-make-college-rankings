@@ -15,9 +15,6 @@ rankings = subset(rankings, select = c(INSTNM,
                                        STUFACR,
                                        gradrate6))
 
-
-
-
 ## source the helper functions
 source("R/calcUserPref.R")
 source("R/between.R")
@@ -70,10 +67,5 @@ shinyServer(function(input, output, session) {
   output$schools <- renderDataTable({
     user_prefs()
   })
-  
-
-  
-  
-  
   
 })
