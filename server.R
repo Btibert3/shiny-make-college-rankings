@@ -67,15 +67,15 @@ shinyServer(function(input, output, session) {
     user_df$rank = NULL
     
     ## user friendly column names
-#     COLS = c("School",
-#                  "FY Enrollment",
-#                  "Presitge %",
-#                  "% Awarded School $",
-#                  "Net Price",
-#                  "Freshmen Retention",
-#                  "S:F Ratio",
-#                  "% Grad in 6 Yrs")
-#     colnames(user_df) = COLS
+    COLS = c("School",
+                 "FY Enrollment",
+                 "Presitge %",
+                 "% Awarded School $",
+                 "Net Price",
+                 "Freshmen Retention",
+                 "S:F Ratio",
+                 "% Grad in 6 Yrs")
+    colnames(user_df) = COLS
     
     ## return the data
     user_df
@@ -86,6 +86,6 @@ shinyServer(function(input, output, session) {
   # Filter data based on selections
   output$schools <- renderDataTable({
     user_prefs()
-  })
+  },     options = list(bFilter = FALSE, iDisplayLength = 10))
   
 })
