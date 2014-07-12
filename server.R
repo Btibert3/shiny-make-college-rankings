@@ -86,6 +86,6 @@ shinyServer(function(input, output, session) {
   # Filter data based on selections
   output$schools <- renderDataTable({
     user_prefs()
-  },     options = list(bFilter = FALSE, iDisplayLength = 10))
+  },options = list(bFilter = FALSE, iDisplayLength = 10))
   
 })

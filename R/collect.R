@@ -35,7 +35,7 @@ for (Z in ZIP) {
   tmp = read.table(CSV, header=T, sep=",", stringsAsFactors=F)
   # assign it to the names object
   S = str_extract(Z, pattern="[A-Z0-9]+")
-  cat(Z)
+  cat(Z,  "\n")
   assign(S, tmp)
   # remove the csv
   file.remove(CSV)
