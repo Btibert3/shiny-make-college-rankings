@@ -28,7 +28,8 @@ shinyServer(function(input, output, session) {
   
   user_prefs = reactive({
     
-    ## get the inputs
+    ## get the average of the user's ranges per input to find the closest schools 
+    ## based on Euclidian distance
     U_ENROLL = mean(input$enroll)
     U_YIELD = mean(input$yield)
     U_IGRNT = mean(input$igrnt)
@@ -37,7 +38,7 @@ shinyServer(function(input, output, session) {
     U_SF = mean(input$sf)
     U_GR = mean(input$grad)
     
-    ## filter the data
+    ## filter the data to include schools based on the users rankings
     user_pop = subset(rankings, 
                       between(ENRLT, input$enroll[1], input$enroll[2]) &
                       between(yield, input$yield[1], input$yield[2]) &
@@ -47,7 +48,8 @@ shinyServer(function(input, output, session) {
                       between(STUFACR, input$sf[1], input$sf[2]) &
                       between(gradrate6, input$grad[1], input$grad[2]))
     
-    ## apply the rankings to the filtered data
+    ## apply the distance calculation to the filtered data
+    ## so we can apply a user-driven rank-ordered list
     user_df = calcUserPref(user_pop, 
                            U_ENROLL,
                            U_YIELD,
@@ -59,6 +61,13 @@ shinyServer(function(input, output, session) {
     
     ## sort the schools based on ranking
     user_df = arrange(user_df, rank)
+    
+    ## remove the temp calcs
+    user_df$dist = NULL
+    user_df$rank = NULL
+    
+    ## return the data
+    user_df
 
   })
 
