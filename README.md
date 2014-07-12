@@ -6,6 +6,9 @@ http://time.com/71782/make-your-own-college-ranking/
 
 .....  
 
+## TODO/VERIFY
+
+- The enrollment range doesn't make sense, it should be > ~5K
 
 ## Process
 
